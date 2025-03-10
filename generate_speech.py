@@ -8,12 +8,19 @@ import subprocess
 
 from pydub import AudioSegment
 
-cache_dir = "media/audio"
+# 可以修改的默认配置
+video_file      = "media/videos/template/480p15/Template.mp4"
+subtitles_file  = "media/subtitles.jsonl"
+voice_name      = "longlaotie" # 可选 "loongbella" 或 "longmiao" 等
+
+# 一般不修改的默认配置
+cache_dir       = "media/audio"
 
 
 def tts_engine_aliyun(text, mp3_file, role="longmiao"):
     import dashscope
     from dashscope.audio.tts_v2 import SpeechSynthesizer
+    
     model = "cosyvoice-v1"
     voice = role
     # 从系统环境变量中获取阿里云API密钥
@@ -204,9 +211,4 @@ def generate_speech(video_file, subtitles_file, voice_name, verbose=False):
     merge_video_audio(video_file, verbose)
 
 if __name__ == "__main__":
-    
-    video_file = "media/videos/template/480p15/Template.mp4"
-    subtitles_file = "media/subtitles.jsonl"
-    voice_name = "longlaotie" # 可选 "loongbella" 或 "longmiao" 等
-
     generate_speech(video_file, subtitles_file, voice_name)
