@@ -69,12 +69,16 @@ class Template(ThreeDScene): # 根据实际需求可以采用 Scene 或 ThreeDSc
     
     # 构建动画的主体
     def construct(self):
-        # 基于该模板，可以尝试应用如下提示词进行 AI 生成：
-        # 请基于这里的模板设计一套动画用于展示 xxx 中的 xxx 概念，要求
-        # 1）使用模板自带的字幕和计时相关功能，根据需要切换 ThreeDScene 或 Scene 类
-        # 2）添加充足的字幕说明。
-        # 3）展示说明要深刻、生动、易懂。
-        # 4）先给出详细的策划，经过我审核后，再进行动画代码的生成。
+        # ------------------------------
+        # 参考提示词：
+        # ------------------------------
+        # 请基于这里的模板设计一套动画用于展示 xxx，注意遵循以下要求：
+        # 1）使用模板自带的字幕和计时相关功能，按需切换 ThreeDScene 或 Scene 类
+        # 2）添加充足的字幕说明
+        # 3）展示说明要深刻、生动、易懂
+        # 4）每个动画动作都要明确地设定 run_time 参数，并相应维护动画计时器 animation_timer
+        # 5）生成的动画代码放在一个新文件中，并命名为 ai_code.py，注意使用新的类名并更新结果文件名
+        # 6）先给出详细的策划，经我审核后再进行动画代码的生成
 
         print("在这里插入动画代码。")
 
@@ -88,6 +92,7 @@ if __name__ == "__main__":
     # 定义 manim 命令行参数
     quality = "l"  # 可选的有 l, m, h, k
     preview = ""   # 不自动预览，若需要预览可设为 "-p"
+    voice_name = "longlaotie"  # 可选的有 longlaotie, longbella 等
     
     quality_to_str = {
         "l": "480p15",
@@ -108,6 +113,6 @@ if __name__ == "__main__":
     subtitles_file = "media/subtitles.jsonl"
     
     # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
-    generate_speech(video_file, subtitles_file, 'longlaotie')
+    generate_speech(video_file, subtitles_file, voice_name)
     
     print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
