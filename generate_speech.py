@@ -8,15 +8,19 @@ import subprocess
 
 from pydub import AudioSegment
 
-cache_dir = "media/cache"
+# 可以修改的默认配置
+video_file      = "media/videos/template/480p15/Template.mp4"
+subtitles_file  = "media/subtitles.jsonl"
+voice_name      = "longlaotie" # 可选 "loongbella" 或 "longmiao" 等
 
-def get_audio_duration(mp3_file):
-    audio = AudioSegment.from_mp3(mp3_file)
-    return audio.duration_seconds
+# 一般不修改的默认配置
+cache_dir       = "media/audio"
+
 
 def tts_engine_aliyun(text, mp3_file, role="longmiao"):
     import dashscope
     from dashscope.audio.tts_v2 import SpeechSynthesizer
+    
     model = "cosyvoice-v1"
     voice = role
     # 从系统环境变量中获取阿里云API密钥
@@ -60,7 +64,7 @@ def run_tts_4all(subtitles, voice_name):
     file_list, duration_list = [], []
     for i in range(N):
         sub = subtitles[i]
-        audio_file = f"{cache_dir}/audio_{i:03d}.mp3"
+        audio_file = os.path.join(cache_dir, f"audio_{i:03d}.mp3")
         print(f"\n处理字幕 {i+1}/{N}: '{sub['text']}'")
 
         # 生成语音并记录时长
@@ -142,8 +146,12 @@ def verify_time(video_file):
     
     return is_synced
 
-def merge_video_audio(video_file):
-    """合并视频和音频"""
+def merge_video_audio(video_file, verbose=True):
+    """合并视频和音频
+    Args:
+        video_file: 视频文件路径
+        verbose: 是否显示ffmpeg输出，默认为True
+    """
     full_audio_file = os.path.join(cache_dir, "full_audio.mp3")
 
     # 使用ffmpeg合并视频和音频
@@ -163,7 +171,8 @@ def merge_video_audio(video_file):
     
     try:
         print(f"正在合并视频和音频...")
-        subprocess.run(cmd, check=True)
+        # 根据verbose参数决定是否显示ffmpeg输出
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL if not verbose else None, stderr=subprocess.DEVNULL if not verbose else None)
         print(f"合并完成: {output_file}")
         return True
     except subprocess.CalledProcessError as e:
@@ -176,8 +185,7 @@ def clean_cache(cache_dir):
     print("已清理临时文件")
 
 
-def generate_speech(video_file, subtitles_file, voice_name):
-    cache_dir = "media/cache"
+def generate_speech(video_file, subtitles_file, voice_name, verbose=False):
     os.makedirs(cache_dir, exist_ok=True)
 
     print(f"开始生成语音，使用音色：{voice_name}")
@@ -200,13 +208,7 @@ def generate_speech(video_file, subtitles_file, voice_name):
     verify_time(video_file)
     
     # 合并视频和音频
-    merge_video_audio(video_file)
+    merge_video_audio(video_file, verbose)
 
 if __name__ == "__main__":
-    
-    video_file = "media/videos/template/480p15/Template.mp4"
-    subtitles_file = "media/subtitles.jsonl"
-    voice_name = "longlaotie" 
-    # voice_name = "loongbella"
-
     generate_speech(video_file, subtitles_file, voice_name)
