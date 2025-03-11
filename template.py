@@ -5,16 +5,16 @@ import numpy as np
 from manim import *
 
 
-class Template(ThreeDScene): # 根据实际需求可以采用 Scene 或 ThreeDScene 类
+# 根据实际需求可以采用 Scene 或 ThreeDScene 类
+class Template(ThreeDScene): 
     # 初始化代码
     def __init__(self):
         super().__init__()
-        # 初始化总时间计数器、字幕文件、字幕编号、字幕字体大小、单字符语音时间
+        # 初始化输出文件夹、总时间计数器、字幕编号、字幕字体大小、单字符语音时间
         self.default_output_dir = 'media'
         self.animation_timer = 0.0
         self.subtitle_id = 0
-        self.subtitle_font_size = 28
-        self.time_per_char = 0.3
+        self.time_per_char = 0.28
 
         # 确保缓存目录存在
         os.makedirs(self.default_output_dir, exist_ok=True)
@@ -29,7 +29,7 @@ class Template(ThreeDScene): # 根据实际需求可以采用 Scene 或 ThreeDSc
             os.makedirs(os.path.dirname(self.subtitle_file), exist_ok=True)
         
         # 初始化字幕对象
-        self.subtitle = Text("", font_size=self.subtitle_font_size) 
+        self.subtitle = Text("") 
     
     # 用于构建字幕并自动计时的函数
     def update_subtitle(self, text, wait=0.0, fontsize=24):
@@ -70,16 +70,8 @@ class Template(ThreeDScene): # 根据实际需求可以采用 Scene 或 ThreeDSc
     # 构建动画的主体
     def construct(self):
         # ------------------------------
-        # 参考提示词：
+        # 在这里插入动画代码。
         # ------------------------------
-        # 请基于这里的模板设计一套动画用于展示 xxx，注意遵循以下要求：
-        # - 将 template.py 拷贝一份为 ai_code.py，在新文件中进行生成。
-        # - 注意使用新的类名并随之更新结果文件名
-        # - 使用模板自带的字幕和计时相关功能，按需切换 ThreeDScene 或 Scene 类
-        # - 展示说明要深刻、生动、易懂并添加充足的字幕说明
-        # - 每个动画动作都要明确地设定 run_time 参数，并相应维护动画计时器 animation_timer
-        # - 先给出详细的策划，经我审核后再进行动画代码的生成
-
         print("在这里插入动画代码。")
 
         

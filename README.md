@@ -64,12 +64,13 @@ ALIYUNAPI=your_api_key_here
 - 将 template.py 拷贝一份为 ai_code.py，在新文件中进行生成。
 - 注意使用新的类名并随之更新结果文件名
 - 使用模板自带的字幕和计时相关功能，按需切换 ThreeDScene 或 Scene 类
-- 展示说明要深刻、生动、易懂并添加充足的字幕说明
+- 动画要丰富、深刻、生动、易懂，并添加充足的字幕说明
+- 设计字幕时要考虑到 tts 阅读的需求，避免使用难以识别的特殊字符。
 - 每个动画动作都要明确地设定 run_time 参数，并相应维护动画计时器 animation_timer
 - 先给出详细的策划，经我审核后再进行动画代码的生成
 ```
 
-## 关键参数配置
+## 主要参数配置
 在`template.py`中可调整：
 ```python
 # 视频质量设置
@@ -78,14 +79,9 @@ preview = ""  # 改为 -p 可自动预览
 
 # 语音合成设置
 voice_name = "longlaotie"  # 推荐发音人：longlaotie/loongbella
-self.time_per_char = 0.3  # 每个字符的默认持续时间
+self.time_per_char = 0.28  # 每个字符的默认持续时间
 ```
 
-## 依赖安装
-确保已安装所有依赖
-```bash
-pip install -r requirements.txt
-```
 
 ## FFmpeg 安装
 
@@ -98,10 +94,9 @@ pip install -r requirements.txt
 4. 重启命令提示符或 PowerShell，输入 `ffmpeg -version` 验证安装
 
 ### macOS 安装
-使用 Homebrew 安装：
+brew install ffmpeg
 
 ### Ubuntu 安装
-使用 apt 包管理器安装：
 ```
 sudo apt update
 sudo apt install ffmpeg
@@ -111,10 +106,9 @@ sudo apt install ffmpeg
 
 ```
 manim_template/
-├── scenes/            # 您的场景文件
-├── examples/          # 示例场景
-├── assets/            # 图像、音频等资源文件
-├── utils/             # 实用工具函数
+├── media/             # manim 场景和语音等缓存文件
+├── template.py        # 主模板
+├── generate_speech.py # 配音模块
 ├── requirements.txt   # 项目依赖
 └── README.md          # 项目说明
 ```
