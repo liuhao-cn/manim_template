@@ -37,6 +37,7 @@ videos/
 venv/
 env/
 ENV/
+.env
 
 # IDE
 .idea/

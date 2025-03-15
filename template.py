@@ -32,15 +32,15 @@ class Template(ThreeDScene):
         self.subtitle = Text("") 
     
     # 用于构建字幕并自动计时的函数
-    def update_subtitle(self, text, wait=0.0, fontsize=24):
+    def update_subtitle(self, text_subtitle, text_voice, wait=0.0, fontsize=24):
         """更新字幕并同步写入字幕文件，包括时间。注意需要内置动画计时器支持"""
         # 如果有旧字幕，先移除
         if hasattr(self, 'subtitle') and self.subtitle is not None:
             self.remove(self.subtitle)
         
         # 如果文本不为空，则创建新字幕
-        if text:
-            new_subtitle = Text(text, font_size=fontsize)
+        if text_subtitle:
+            new_subtitle = MathTex(text_subtitle, font_size=fontsize)
             new_subtitle.to_edge(DOWN)
 
             # 将字幕添加到场景中
@@ -52,7 +52,7 @@ class Template(ThreeDScene):
             self.subtitle_id += 1
             subtitle_json = {
                 "id":           self.subtitle_id, 
-                "text":         text.strip(),  # 移除空白
+                "text":         text_voice.strip(),  # 移除空白
                 "start_time":   self.animation_timer
                 }
             with open(self.subtitle_file, 'a', encoding='utf-8') as f:
