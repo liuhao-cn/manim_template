@@ -1,12 +1,14 @@
 # Manim 动画模板项目（含自动语音合成）
 
-这是一个基于[Manim](https://www.manim.community/)的动画生成模板项目，用于创建高质量的数学和物理可视化动画。项目中包含一些已经创建好的动画脚本。
+这是一个基于[Manim](https://www.manim.community/)的动画生成模板项目，用于创建高质量的数学和物理可视化动画。项目中已经包含一些创建好的动画脚本。
+
 
 ## 技术背景
 
 Manim是一个由3Blue1Brown（Grant Sanderson）开发的Python库，用于创建精美的数学解释视频。本项目提供了一个简单的模板，帮助您快速开始使用Manim创建自己的动画。
 
 本项目主要是建立了一个可以较好处理字幕和配音、便于使用的模板。
+
 
 ## 安装指南
 
@@ -16,16 +18,16 @@ Manim是一个由3Blue1Brown（Grant Sanderson）开发的Python库，用于创�
 - pip（Python包管理器）
 - FFmpeg（用于视频渲染）
 
+
 ### 安装步骤
 
-1. 安装依赖：
+1. 安装系统级应用：
 
-首先安装必要的系统级应用，然后安装 python 包。
-如果对系统级应用非常熟悉，也可以自行部分安装。
-如果此前已经完整安装过系统级应用或 python 包，可以跳过这一步。
+如果对系统级应用非常熟悉，这里可以自行安装必要的部分。
+如果此前已经安装过系统级应用，可以跳过这一步。
 
-如果默认 apt 源速度太慢可以先如下替换 apt 源，否则可以跳过替换步骤
-
+首先，默认 apt 源速度在国内有可能速度太慢，可以先如下替换。
+如果安装速度正常可以跳过该步骤。
 ```bash
 sudo mv /etc/apt/sources.list /etc/apt/sources.list.bak
 sudo nano /etc/apt/sources.list
@@ -45,10 +47,9 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted 
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted universe multiverse
 ```
 
-然后安装系统级应用和 python 包
+完成源替换后开始安装系统级应用
 ```bash
 sudo apt update
-
 sudo apt install -y \
     build-essential python3-dev python3-pip python3-venv git wget curl \
     texlive-full texlive-latex-extra texlive-fonts-extra texlive-xetex latexmk \
@@ -59,7 +60,6 @@ sudo apt install -y \
     xclip xsel libopenmpi-dev libssl-dev \
     libavdevice-dev libavfilter-dev libavformat-dev libavcodec-dev \
     libswresample-dev libswscale-dev libpostproc-dev
-
 sudo apt autoremove -y && sudo apt clean
 ```
 
@@ -73,24 +73,19 @@ cd manim_template
 3. 创建并激活虚拟环境（推荐）：
 
 ```bash
-# 在Windows上
-python -m venv manim
-manim\Scripts\activate
-
-# 在Linux/MacOS上
 python -m venv manim
 source manim/bin/activate
 ```
 
 4. 安装 python 包：
-如果默认安装源速度缓慢，可以先替换为清华源（正常则无需替换）：
+
+和前面一样，如果默认的安装源速度太慢，可以先如下替换（速度正常可无需替换）：
 ```bash
 python -m pip install --upgrade pip
-
 pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 ```
 
-安装所需的 python 软件包
+替换后安装所需的 python 软件包
 ```bash
 pip install -r requirements.txt
 ```
@@ -98,7 +93,7 @@ pip install -r requirements.txt
 
 ## API密钥设置
 
-本项目使用阿里云Dashscope的语音合成服务，请按以下方式设置API密钥或修改 tts_engine_aliyun 改用你偏好的API：
+本项目的语音部分使用阿里云语音合成服务，请按以下方式设置API密钥或修改 tts_engine_aliyun 改用你偏好的API：
 ```bash
 echo "export ALIYUNAPI='your_api_key_here'" >> ~/.bashrc
 source ~/.bashrc
@@ -112,16 +107,16 @@ source manim/bin/activate
 
 ## 使用方法：
 
-可参考以下 AI 提示词：
+将 template.py 和合适的提示词一起喂给大模型进行代码生成。可以参考以下 AI 提示词，
 ```AI prompt
-请基于这里的模板设计一套动画用于展示 xxx，注意遵循以下要求：
-- 将 template.py 拷贝一份为 ai_code.py，在新文件中进行生成。
+请基于我提供给你的模板设计一套动画用于展示 xxx，注意遵循以下要求：
+- 生成结果应该是一份新的代码，例如 ai_code.py
 - 注意使用新的类名并随之更新各输出文件名
 - 使用模板自带的字幕和计时相关功能，根据场景需要选择 ThreeDScene 或 Scene 类
 - 动画要丰富、深刻、生动、易懂，并添加充足的字幕说明
-- 字幕说明的时间要精确计算，默认取 wait=0 即按字数计算。如果预期后续的动画时间比较长，应该削减字幕的 wait
-- 设计字幕时要使用两套文本，一套包含 latex 格式用于显示，一套纯语音用于 tts 阅读，注意 update_subtitle 已经支持两套字幕
-- 如果字幕包含中文且使用了 latex 功能，要明确地为 latex 功能添加中文支持。
+- 字幕说明的时间要精确计算，默认取 wait=0 即按字数计算
+- 你要预估每个字幕的后续动画时间，如果这个时间很长，你应该适当削减字幕的 wait
+- 设计字幕时要使用两套文本，一套包含 latex 格式公式用于显示，一套纯文本专用于 tts 阅读，注意 update_subtitle 已经支持两套字幕
 - 每个动画动作都要明确地设定 run_time 参数，并相应维护动画计时器 animation_timer
 - 先给出详细的策划，经我审核后再进行动画代码的生成
 ```
