@@ -5,6 +5,12 @@ import numpy as np
 import argparse
 from manim import *
 
+config.tex_template.add_to_preamble(r"""
+\usepackage{ctex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+""")
+
 # 根据实际需求可以采用 Scene 或 ThreeDScene 类
 class Template(ThreeDScene): 
     # 初始化代码
@@ -72,7 +78,7 @@ class Template(ThreeDScene):
         # ------------------------------
         # 在这里插入动画代码。
         # ------------------------------
-        self.update_subtitle("Hello, world!", "你好，世界！")
+        self.update_subtitle(r"\text{你好，世界!}", "你好，世界！")
 
         
 
