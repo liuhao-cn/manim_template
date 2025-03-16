@@ -353,7 +353,7 @@ class PowerFunctionFourierSeries(Scene):
             func = axes_approx[0].plot(lambda x: fourier_x2(x, n), x_range=[-np.pi, np.pi], color=RED)
             n_str = str(n)
             label = MathTex(r"S_{" + n_str + r"}(x) \text{ (n = " + n_str + r")}", color=RED)
-            label.next_to(func, LEFT, buff=-0.5)
+            label.next_to(func, LEFT, buff=-1.5)
             approx_funcs.append(func)
             approx_labels.append(label)
         
