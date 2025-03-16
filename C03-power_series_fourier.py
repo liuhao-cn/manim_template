@@ -353,7 +353,7 @@ class PowerFunctionFourierSeries(Scene):
             func = axes_approx[0].plot(lambda x: fourier_x2(x, n), x_range=[-np.pi, np.pi], color=RED)
             n_str = str(n)
             label = MathTex(r"S_{" + n_str + r"}(x) \text{ (n = " + n_str + r")}", color=RED)
-            label.next_to(func, DOWN)
+            label.next_to(func, LEFT)
             approx_funcs.append(func)
             approx_labels.append(label)
         
@@ -376,6 +376,8 @@ class PowerFunctionFourierSeries(Scene):
                 f"前 {n_value} 项"
             )
         
+        self.wait(1); self.animation_timer += 1
+
         # 展示误差随项数增加而减小
         self.update_subtitle(
             r"\text{随着项数增加，逼近误差减小}", 
