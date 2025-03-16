@@ -4,7 +4,6 @@ import subprocess
 import numpy as np
 from manim import *
 
-
 # 根据实际需求可以采用 Scene 或 ThreeDScene 类
 class Template(ThreeDScene): 
     # 初始化代码
@@ -18,7 +17,7 @@ class Template(ThreeDScene):
 
         # 确保缓存目录存在
         os.makedirs(self.default_output_dir, exist_ok=True)
-        self.subtitle_file = os.path.join(self.default_output_dir, "subtitles.jsonl")
+        self.subtitle_file = os.path.join(self.default_output_dir, f"subtitles_{self.__class__.__name__}.jsonl")
 
         # 如果字幕文件存在，则清空文件，否则创建文件
         if os.path.exists(self.subtitle_file):
@@ -85,6 +84,10 @@ if __name__ == "__main__":
     quality = "l"  # 可选的有 l, m, h, k
     preview = ""   # 不自动预览，若需要预览可设为 "-p"
     voice_name = "longlaotie"  # 可选的有 longlaotie, longbella 等
+
+    buff = Template() # 创建一个虚的对象用于获取字幕文件路径
+
+    print(f"字幕文件路径：{buff.subtitle_file}")
     
     quality_to_str = {
         "l": "480p15",
@@ -100,9 +103,8 @@ if __name__ == "__main__":
     from generate_speech import generate_speech
     # 根据 manim 的输出结构确定文件路径
     # 视频文件路径：media/videos/template/质量标识/类名.mp4
-    # 字幕文件路径：media/subtitles.jsonl
+    # 字幕文件在类初始化时会自动设定。
     video_file = f"media/videos/template/{quality_str}/Template.mp4"
-    subtitles_file = "media/subtitles.jsonl"
     
     # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
     generate_speech(video_file, subtitles_file, voice_name)
