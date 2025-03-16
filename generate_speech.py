@@ -207,8 +207,8 @@ def generate_speech(video_file, subtitles_file, voice_name, verbose=False):
     # 根据字幕的开始时间，将语音插入到完整音频中
     make_final_audio(subtitles, audio_files, total_time)
     
-    # # 验证视频和音频的同步性
-    # verify_time(video_file)
+    # 验证视频和音频的同步性
+    verify_time(video_file)
     
     # 合并视频和音频
     merge_video_audio(video_file, verbose)

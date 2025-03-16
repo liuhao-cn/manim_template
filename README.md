@@ -83,6 +83,14 @@ source manim/bin/activate
 ```
 
 4. 安装 python 包：
+如果默认安装源速度缓慢，可以先替换为清华源（正常则无需替换）：
+```bash
+python -m pip install --upgrade pip
+
+pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+```
+
+安装所需的 python 软件包
 ```bash
 pip install -r requirements.txt
 ```
