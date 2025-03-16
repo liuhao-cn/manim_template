@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import numpy as np
+import argparse
 from manim import *
 
 config.tex_template.add_to_preamble(r"""
@@ -23,7 +24,7 @@ class PowerFunctionFourierSeries(Scene):
 
         # 确保缓存目录存在
         os.makedirs(self.default_output_dir, exist_ok=True)
-        self.subtitle_file = os.path.join(self.default_output_dir, "subtitles.jsonl")
+        self.subtitle_file = os.path.join(self.default_output_dir, f"subtitles_{self.__class__.__name__}.jsonl")
 
         # 如果字幕文件存在，则清空文件，否则创建文件
         if os.path.exists(self.subtitle_file):
@@ -450,11 +451,20 @@ class PowerFunctionFourierSeries(Scene):
 
 # 主函数
 if __name__ == "__main__":
+    # 从命令行输入质量参数
+    parser = argparse.ArgumentParser(description="运行模板动画")
+    parser.add_argument("--quality", "-q", type=str, choices=["l", "m", "h", "k"], default="l",
+                        help="动画质量：l(低), m(中), h(高), k(4K)")
+    args = parser.parse_args()
+
     # 定义 manim 命令行参数
-    quality = "l"  # 可选的有 l, m, h, k
-    preview = ""   # 不自动预览，若需要预览可设为 "-p"
+    quality = args.quality  # 从命令行参数获取质量设置
     voice_name = "longlaotie"  # 可选的有 longlaotie, longbella 等
-    
+
+    buff = PowerFunctionFourierSeries() # 创建一个虚的对象用于获取字幕文件路径
+    class_name = buff.__class__.__name__
+    script_filename = os.path.splitext(os.path.basename(__file__))
+
     quality_to_str = {
         "l": "480p15",
         "m": "720p30",
@@ -463,17 +473,17 @@ if __name__ == "__main__":
     }; quality_str = quality_to_str.get(quality)
 
     # 构建并执行 manim 命令，-q 指定渲染质量，-p 指定预览，__file__ 指定当前文件，PowerFunctionFourierSeries 指定类名
-    cmd = f"manim -q{quality} {preview} {__file__} PowerFunctionFourierSeries"
+    cmd = f"manim -q{quality} {__file__} PowerFunctionFourierSeries"
+
     result = subprocess.run(cmd, shell=True)
 
     from generate_speech import generate_speech
     # 根据 manim 的输出结构确定文件路径
     # 视频文件路径：media/videos/ai_code/质量标识/类名.mp4
     # 字幕文件路径：media/subtitles.jsonl
-    video_file = f"media/videos/ai_code/{quality_str}/PowerFunctionFourierSeries.mp4"
-    subtitles_file = "media/subtitles.jsonl"
+    video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
     
     # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
-    generate_speech(video_file, subtitles_file, voice_name)
+    generate_speech(video_file, buff.subtitle_file, voice_name)
     
     print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")

@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import numpy as np
+import argparse
 from manim import *
 
 # 根据实际需求可以采用 Scene 或 ThreeDScene 类
@@ -59,7 +60,7 @@ class Template(ThreeDScene):
 
         # 默认情况下根据字符数目自动决定等待时间
         if wait==0:
-            wait = len(text) * self.time_per_char
+            wait = len(text_voice) * self.time_per_char
         else:
             wait = wait
             
@@ -71,7 +72,7 @@ class Template(ThreeDScene):
         # ------------------------------
         # 在这里插入动画代码。
         # ------------------------------
-        print("在这里插入动画代码。")
+        self.update_subtitle("Hello, world!", "你好，世界！")
 
         
 
@@ -80,14 +81,19 @@ class Template(ThreeDScene):
 
 # 主函数
 if __name__ == "__main__":
+    # 从命令行输入质量参数
+    parser = argparse.ArgumentParser(description="动画模板")
+    parser.add_argument("--quality", "-q", type=str, choices=["l", "m", "h", "k"], default="l",
+                        help="动画质量：l(低), m(中), h(高), k(4K)")
+    args = parser.parse_args()
+
     # 定义 manim 命令行参数
-    quality = "l"  # 可选的有 l, m, h, k
-    preview = ""   # 不自动预览，若需要预览可设为 "-p"
+    quality = args.quality  # 从命令行参数获取质量设置
     voice_name = "longlaotie"  # 可选的有 longlaotie, longbella 等
 
     buff = Template() # 创建一个虚的对象用于获取字幕文件路径
-
-    print(f"字幕文件路径：{buff.subtitle_file}")
+    class_name = buff.__class__.__name__
+    script_filename = os.path.splitext(os.path.basename(__file__))
     
     quality_to_str = {
         "l": "480p15",
@@ -97,14 +103,14 @@ if __name__ == "__main__":
     }; quality_str = quality_to_str.get(quality)
 
     # 构建并执行 manim 命令，-q 指定渲染质量，-p 指定预览，__file__ 指定当前文件，Template 指定类名
-    cmd = f"manim -q{quality} {preview} {__file__} Template"
+    cmd = f"manim -q{quality} {__file__} {class_name}"
     result = subprocess.run(cmd, shell=True)
 
     from generate_speech import generate_speech
     # 根据 manim 的输出结构确定文件路径
     # 视频文件路径：media/videos/template/质量标识/类名.mp4
     # 字幕文件在类初始化时会自动设定。
-    video_file = f"media/videos/template/{quality_str}/Template.mp4"
+    video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
     
     # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
     generate_speech(video_file, buff.subtitle_file, voice_name)

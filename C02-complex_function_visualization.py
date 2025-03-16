@@ -1,6 +1,7 @@
 from manim import *
 import json
 import os
+import argparse
 import numpy as np
 import matplotlib.cm as cm
 import subprocess
@@ -72,7 +73,7 @@ class ComplexFunctionVisualization(Scene):
 
         # 确保缓存目录存在
         os.makedirs(self.default_output_dir, exist_ok=True)
-        self.subtitle_file = os.path.join(self.default_output_dir, "subtitles.jsonl")
+        self.subtitle_file = os.path.join(self.default_output_dir, f"subtitles_{self.__class__.__name__}.jsonl")
 
         # 如果字幕文件存在，则清空文件，否则创建文件
         if os.path.exists(self.subtitle_file):
@@ -563,10 +564,20 @@ class ComplexFunctionVisualization(Scene):
 
 # 主函数
 if __name__ == "__main__":
+    # 从命令行输入质量参数
+    parser = argparse.ArgumentParser(description="运行模板动画")
+    parser.add_argument("--quality", "-q", type=str, choices=["l", "m", "h", "k"], default="l",
+                        help="动画质量：l(低), m(中), h(高), k(4K)")
+    args = parser.parse_args()
+
     # 定义 manim 命令行参数
-    quality = "l"  # 可选的有 l, m, h, k
+    quality = args.quality  # 从命令行参数获取质量设置
     preview = ""   # 不自动预览，若需要预览可设为 "-p"
     voice_name = "longlaotie"  # 可选的有 longlaotie, longbella 等
+
+    buff = ComplexFunctionVisualization() # 创建一个虚的对象用于获取字幕文件路径
+    class_name = buff.__class__.__name__
+    script_filename = os.path.splitext(os.path.basename(__file__))
     
     quality_to_str = {
         "l": "480p15",
@@ -576,18 +587,17 @@ if __name__ == "__main__":
     }; quality_str = quality_to_str.get(quality)
 
     # 构建并执行 manim 命令
-    cmd = f"manim -q{quality} {preview} {__file__} ComplexFunctionVisualization"
+    cmd = f"manim -q{quality} {__file__} {class_name}"
     result = subprocess.run(cmd, shell=True)
 
     # 导入语音生成模块
     try:
         from generate_speech import generate_speech
         # 根据 manim 的输出结构确定文件路径
-        video_file = f"media/videos/complex_function_visualization/{quality_str}/ComplexFunctionVisualization.mp4"
-        subtitles_file = "media/subtitles.jsonl"
+        video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
         
         # 调用语音生成函数
-        generate_speech(video_file, subtitles_file, voice_name)
+        generate_speech(video_file, buff.subtitle_file, voice_name)
         
         print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
     except ImportError:

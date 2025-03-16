@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 import os
 import json
+import argparse
 import shutil
 
 # manim default output dir
@@ -19,7 +20,7 @@ class RiemannSphere(ThreeDScene):
 
         # 确保缓存目录存在
         os.makedirs(default_output_dir, exist_ok=True)
-        self.subtitle_file = os.path.join(default_output_dir, "subtitles.jsonl")
+        self.subtitle_file = os.path.join(default_output_dir, f"subtitles_{self.__class__.__name__}.jsonl")
 
         # 如果字幕文件存在，则清空文件，否则创建文件
         if os.path.exists(self.subtitle_file):
