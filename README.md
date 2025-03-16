@@ -86,7 +86,7 @@ self.time_per_char = 0.28  # 每个字符的默认持续时间
 
 ## FFmpeg 安装
 
-本项目需要 FFmpeg 来处理音频和视频。请按照以下步骤安装：
+manim 需要 FFmpeg 来处理音频和视频（根据文档，最新版本或可跳过）。请按照以下步骤安装：
 
 ### Windows 安装
 1. 下载 FFmpeg：访问 [FFmpeg官网](https://ffmpeg.org/download.html) 或 [FFmpeg Windows 构建](https://www.gyan.dev/ffmpeg/builds/)
