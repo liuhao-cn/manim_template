@@ -34,7 +34,7 @@ videos/
 */*.svg
 
 # Virtual Environment
-venv/
+.venv/
 env/
 ENV/
 .env

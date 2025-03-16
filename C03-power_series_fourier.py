@@ -353,7 +353,7 @@ class PowerFunctionFourierSeries(Scene):
             func = axes_approx[0].plot(lambda x: fourier_x2(x, n), x_range=[-np.pi, np.pi], color=RED)
             n_str = str(n)
             label = MathTex(r"S_{" + n_str + r"}(x) \text{ (n = " + n_str + r")}", color=RED)
-            label.next_to(func, LEFT)
+            label.next_to(func, LEFT, buff=0.5)
             approx_funcs.append(func)
             approx_labels.append(label)
         
@@ -371,8 +371,9 @@ class PowerFunctionFourierSeries(Scene):
             self.animation_timer += 2
             
             n_value = n_list[i] + 1
+            n_str = str(n_value)
             self.update_subtitle(
-                r"\text{使用前 } {n_value} \text{ 项的傅里叶级数逼近}", 
+                r"\text{使用前 } " + n_str + r" \text{ 项的傅里叶级数逼近}", 
                 f"前 {n_value} 项"
             )
         
