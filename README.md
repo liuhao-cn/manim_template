@@ -1,16 +1,18 @@
 # Manim 动画模板项目（含自动语音合成）
 
-这是一个基于[Manim](https://www.manim.community/)的动画生成模板项目，用于创建高质量的数学和物理可视化动画。
+这是一个基于[Manim](https://www.manim.community/)的动画生成模板项目，用于创建高质量的数学和物理可视化动画。项目中包含一些已经创建好的动画脚本。
 
-## 项目简介
+## 技术背景
 
 Manim是一个由3Blue1Brown（Grant Sanderson）开发的Python库，用于创建精美的数学解释视频。本项目提供了一个简单的模板，帮助您快速开始使用Manim创建自己的动画。
+
+本项目主要是建立了一个可以较好处理字幕和配音、便于使用的模板。
 
 ## 安装指南
 
 ### 前提条件
 
-- Python 3.7+
+- Python 3.8+
 - pip（Python包管理器）
 - FFmpeg（用于视频渲染）
 
@@ -27,12 +29,12 @@ cd manim_template
 
 ```bash
 # 在Windows上
-python -m venv venv
-venv\Scripts\activate
+python -m venv manim
+manim\Scripts\activate
 
 # 在Linux/MacOS上
-python -m venv venv
-source venv/bin/activate
+python -m venv manim
+source manim/bin/activate
 ```
 
 3. 安装依赖：
@@ -43,14 +45,11 @@ pip install -r requirements.txt
 
 ## API密钥设置
 
-本项目使用阿里云Dashscope的语音合成服务，请按以下步骤设置API密钥或修改 tts_engine_aliyun 改用你偏好的API：
-
-1. 在项目根目录创建`.env`文件
-2. 添加阿里云API密钥：
-```env
-ALIYUNAPI=your_api_key_here
+本项目使用阿里云Dashscope的语音合成服务，请按以下方式设置API密钥或修改 tts_engine_aliyun 改用你偏好的API：
 ```
-
+echo "export ALIYUNAPI='your_api_key_here'" >> ~/.bashrc
+```
+或者在项目目录下添加并编辑 .env 添加 ALIYUNAPI='your_api_key_here'
 
 **重要安全提示**：
 - 切勿将`.env`文件提交到版本控制系统
@@ -62,7 +61,7 @@ ALIYUNAPI=your_api_key_here
 ```AI prompt
 请基于这里的模板设计一套动画用于展示 xxx，注意遵循以下要求：
 - 将 template.py 拷贝一份为 ai_code.py，在新文件中进行生成。
-- 注意使用新的类名并随之更新结果文件名
+- 注意使用新的类名并随之更新各输出文件名
 - 使用模板自带的字幕和计时相关功能，根据场景需要选择 ThreeDScene 或 Scene 类
 - 动画要丰富、深刻、生动、易懂，并添加充足的字幕说明
 - 字幕说明的时间要精确计算，默认取 wait=0 即按字数计算。如果预期后续的动画时间比较长，应该削减字幕的 wait
