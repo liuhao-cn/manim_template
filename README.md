@@ -99,8 +99,10 @@ pip install -r requirements.txt
 ## API密钥设置
 
 本项目使用阿里云Dashscope的语音合成服务，请按以下方式设置API密钥或修改 tts_engine_aliyun 改用你偏好的API：
-```
+```bash
 echo "export ALIYUNAPI='your_api_key_here'" >> ~/.bashrc
+source ~/.bashrc
+source manim/bin/activate
 ```
 或者在项目目录下添加并编辑 .env 添加 ALIYUNAPI='your_api_key_here'
 
