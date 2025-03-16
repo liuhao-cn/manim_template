@@ -77,9 +77,8 @@ class Template(ThreeDScene):
         # ------------------------------
         # 在这里插入动画代码。
         # ------------------------------
-        self.update_subtitle(r"x^2 =f(x)", "Hello, World!")
+        self.update_subtitle(r"y=x^2", "Hello, World!")
 
-        
 
 # 主函数
 if __name__ == "__main__":

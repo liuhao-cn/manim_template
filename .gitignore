@@ -35,6 +35,7 @@ videos/
 
 # Virtual Environment
 .venv/
+manim/
 env/
 ENV/
 .env

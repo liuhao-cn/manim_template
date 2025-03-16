@@ -39,7 +39,47 @@ source manim/bin/activate
 
 3. 安装依赖：
 
+首先安装必要的系统级应用，然后安装 python 包。
+如果对系统级应用非常熟悉，也可以自行部分安装。
+
+如果默认 apt 源速度太慢可以先如下替换 apt 源，否则可以跳过替换步骤
+
 ```bash
+sudo mv /etc/apt/sources.list /etc/apt/sources.list.bak
+sudo nano /etc/apt/sources.list
+```
+在 nano 编辑器打开后填入如下内容，保存然后退出
+```
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-backports main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-backports main restricted universe multiverse
+
+# 以下安全更新软件源包含了官方源与镜像站配置，如有需要可自行修改注释切换
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted universe multiverse
+```
+
+然后安装系统级应用和 python 包
+```bash
+sudo apt update
+
+sudo apt install -y \
+    build-essential python3-dev python3-pip python3-venv git wget curl \
+    texlive-full texlive-latex-extra texlive-fonts-extra texlive-xetex latexmk \
+    ffmpeg sox libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 libffi-dev \
+    libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libosmesa6-dev \
+    libxi-dev libxrandr-dev libxinerama-dev libxcursor-dev libxext-dev \
+    fonts-dejavu fonts-freefont-ttf fonts-noto fonts-roboto fonts-lmodern fonts-cmu \
+    xclip xsel libopenmpi-dev libssl-dev \
+    libavdevice-dev libavfilter-dev libavformat-dev libavcodec-dev \
+    libswresample-dev libswscale-dev libpostproc-dev
+
+sudo apt autoremove -y && sudo apt clean
+
 pip install -r requirements.txt
 ```
 
