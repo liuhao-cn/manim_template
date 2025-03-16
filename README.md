@@ -18,29 +18,11 @@ Manim是一个由3Blue1Brown（Grant Sanderson）开发的Python库，用于创�
 
 ### 安装步骤
 
-1. 克隆此仓库：
-
-```bash
-git clone https://github.com/liuhao-cn/manim_template.git
-cd manim_template
-```
-
-2. 创建并激活虚拟环境（推荐）：
-
-```bash
-# 在Windows上
-python -m venv manim
-manim\Scripts\activate
-
-# 在Linux/MacOS上
-python -m venv manim
-source manim/bin/activate
-```
-
-3. 安装依赖：
+1. 安装依赖：
 
 首先安装必要的系统级应用，然后安装 python 包。
 如果对系统级应用非常熟悉，也可以自行部分安装。
+如果此前已经完整安装过系统级应用或 python 包，可以跳过这一步。
 
 如果默认 apt 源速度太慢可以先如下替换 apt 源，否则可以跳过替换步骤
 
@@ -79,9 +61,32 @@ sudo apt install -y \
     libswresample-dev libswscale-dev libpostproc-dev
 
 sudo apt autoremove -y && sudo apt clean
+```
 
+2. 克隆代码仓库：
+
+```bash
+git clone https://github.com/liuhao-cn/manim_template.git
+cd manim_template
+```
+
+3. 创建并激活虚拟环境（推荐）：
+
+```bash
+# 在Windows上
+python -m venv manim
+manim\Scripts\activate
+
+# 在Linux/MacOS上
+python -m venv manim
+source manim/bin/activate
+```
+
+4. 安装 python 包：
+```bash
 pip install -r requirements.txt
 ```
+
 
 ## API密钥设置
 
