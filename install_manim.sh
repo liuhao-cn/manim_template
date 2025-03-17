@@ -112,23 +112,8 @@ install_dependencies() {
     success_msg "系统依赖安装完成"
 }
 
-# 步骤 3：克隆项目仓库
-clone_repo() {
-    status_msg "正在克隆项目仓库..."
-    if [ -d "manim_template" ]; then
-        read -p "检测到已存在 manim_template 目录，是否覆盖？[y/N] " choice
-        case "$choice" in
-            y|Y) rm -rf manim_template ;;
-            *) exit 0 ;;
-        esac
-    fi
-    
-    git clone "$REPO_URL" || error_msg "克隆仓库失败"
-    cd manim_template || error_msg "进入项目目录失败"
-    success_msg "项目克隆完成"
-}
 
-# 步骤 4：配置虚拟环境
+# 步骤 3：配置虚拟环境
 setup_venv() {
     status_msg "正在配置 Python 虚拟环境..."
     python3 -m venv manim || error_msg "创建虚拟环境失败"
@@ -139,14 +124,14 @@ setup_venv() {
     success_msg "虚拟环境配置完成"
 }
 
-# 步骤 5：安装 Python 依赖
+# 步骤 4：安装 Python 依赖
 install_python_deps() {
     status_msg "正在安装 Python 依赖..."
     pip install -r requirements.txt || error_msg "安装依赖失败"
     success_msg "Python 依赖安装完成"
 }
 
-# 步骤 6：配置 API 密钥
+# 步骤 5：配置 API 密钥
 setup_api_key() {
     status_msg "正在配置 API 密钥..."
     read -p "请输入阿里云语音合成 API 密钥（留空可跳过）：" api_key
@@ -163,7 +148,6 @@ setup_api_key() {
 main() {
     replace_apt_source
     install_dependencies
-    clone_repo
     setup_venv
     install_python_deps
     setup_api_key
