@@ -156,9 +156,8 @@ main() {
     success_msg "安装完成！"
     echo -e "后续操作指南："
     echo "1. 激活 API 密钥：source ~/.bashrc"
-    echo "2. 进入项目目录：cd manim_template"
-    echo "3. 激活虚拟环境：source manim/bin/activate"
-    echo "4. 测试动画模板：python3 template.py"
+    echo "2. 激活虚拟环境：source manim/bin/activate"
+    echo "3. 测试动画模板：python3 template.py"
     echo
 }
 
