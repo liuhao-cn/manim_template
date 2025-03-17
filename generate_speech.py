@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import av
 import json
 import shutil
 import subprocess
@@ -101,24 +102,19 @@ def make_final_audio(subtitles, audio_files, total_duration):
     
     print(f"已生成完整配音文件: {full_audio_file} (总时长: {total_duration:.2f}秒)")
 
-def get_video_duration(video_file):
-    """获取视频时长"""
-    # 获取视频时长
-    video_cmd = [
-        'ffprobe', 
-        '-v', 'error', 
-        '-show_entries', 'format=duration', 
-        '-of', 'json', 
-        video_file
-    ]
-    
-    print(video_cmd)
 
+def get_video_duration(video_file):
+    """使用 pyav 获取视频时长"""
     try:
-        video_result = subprocess.run(video_cmd, capture_output=True, text=True)
-        video_data = json.loads(video_result.stdout)
-        print(video_data)
-        video_duration = float(video_data['format']['duration'])
+        # 打开视频文件
+        container = av.open(video_file)
+        
+        # 获取视频时长（以秒为单位）
+        video_duration = float(container.duration / av.time_base)
+        
+        # 关闭容器
+        container.close()
+        
         return video_duration
     except Exception as e:
         print(f"获取视频时长时出错: {e}")
