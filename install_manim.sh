@@ -42,16 +42,16 @@ replace_apt_source() {
     # 生成新版源配置
     sudo tee "$APT_MIRROR_FILE" > /dev/null <<EOF
 # 阿里云 Ubuntu 镜像源（自动适配系统版本）
-deb http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME} main restricted universe multiverse
-deb http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-security main restricted universe multiverse
-deb http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-updates main restricted universe multiverse
-deb http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-proposed main restricted universe multiverse
-deb http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-backports main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME} main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-security main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-updates main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-proposed main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ ${UBUNTU_CODENAME}-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME} main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-security main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-proposed main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-backports main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME} main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-security main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-updates main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-proposed main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-backports main restricted universe multiverse
 EOF
 
     # 优化更新流程
@@ -85,12 +85,12 @@ install_dependencies() {
     
     # TeXLive 组件（动态适配版本）
     if [[ "$UBUNTU_CODENAME" == "focal" || "$UBUNTU_CODENAME" == "jammy" ]]; then
-        # 先阻止自动安装 texlive-context，然后执行 tex 最小化安装组合
-        sudo apt-mark hold texlive-context && \
+        # 执行 tex 最小化安装组合
         sudo apt install -y --ignore-missing texlive-base texlive-latex-recommended \
             texlive-latex-extra texlive-fonts-recommended \
             texlive-lang-chinese texlive-lang-cyrillic cm-super \
-            texlive-xetex
+            texlive-xetex && \
+        sudo apt-mark hold texlive-context
     else
         # 原有轻量安装已不含 context
         sudo apt install -y texlive texlive-xetex texlive-lang-chinese
@@ -143,9 +143,7 @@ setup_api_key() {
     if [ -n "$api_key" ]; then
         # 将 API 密钥写入 .bashrc
         echo "export ALIYUNAPI='$api_key'" >> ~/.bashrc || error_msg "写入密钥失败"
-        # 立即生效
-        source ~/.bashrc
-        success_msg "API 密钥已保存至 ~/.bashrc 并立即生效"
+        success_msg "API 密钥已保存至 ~/.bashrc"
     else
         echo "跳过 API 密钥配置"
     fi
@@ -162,7 +160,7 @@ main() {
     
     echo
     success_msg "安装完成！"
-    echo -e "后续操作指南：\n1. 进入项目目录：cd manim_template\n2. 激活虚拟环境：source manim/bin/activate\n3. 开始使用模板创建动画"
+    echo -e "后续操作指南：\n1. 激活 API 密钥：source ~/.bashrc\n2.进入项目目录：cd manim_template\n3. 激活虚拟环境：source manim/bin/activate\n4. 开始使用模板创建动画"
 }
 
 # 执行主流程
