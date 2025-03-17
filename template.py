@@ -112,8 +112,14 @@ if __name__ == "__main__":
     # 视频文件路径：media/videos/类名/质量标识/类名.mp4
     # 字幕文件在类初始化时会自动设定。
     video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
+
+    # 在字幕文件第一行插入视频文件和音色信息
+    with open(buff.subtitle_file, 'r+', encoding='utf-8') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(json.dumps({"video_file": video_file, "voice_name": voice_name}, ensure_ascii=False) + '\n' + content)
     
     # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
-    generate_speech(video_file, buff.subtitle_file, voice_name)
+    generate_speech(buff.subtitle_file)
     
     print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")

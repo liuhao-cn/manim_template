@@ -41,13 +41,26 @@ def tts_engine_aliyun(text, mp3_file, role="longmiao"):
 
 def read_subtitles(subtitle_file):
     """读取字幕文件"""
+    # 读取第一行获取视频文件和音色信息
+    with open(subtitle_file, 'r', encoding='utf-8') as f:
+        first_line = f.readline()
+        try:
+            config = json.loads(first_line)
+            global video_file, voice_name
+            video_file = config.get("video_file", video_file)
+            voice_name = config.get("voice_name", voice_name)
+        except json.JSONDecodeError:
+            print("警告: 字幕文件第一行不是配置信息！")
+            exit(1)
+    
     subtitles = []
     try:
         with open(subtitle_file, 'r', encoding='utf-8') as f:
+            next(f)  # 跳过第一行
             for line in f:
                 subtitles.append(json.loads(line))
         print(f"已读取 {len(subtitles)} 条字幕")
-        return subtitles
+        return video_file, voice_name, subtitles
     except FileNotFoundError:
         print(f"错误: 找不到字幕文件 {subtitle_file}")
         return []
@@ -184,15 +197,15 @@ def clean_cache(cache_dir):
     print("已清理临时文件")
 
 
-def generate_speech(video_file, subtitles_file, voice_name, verbose=False):
+def generate_speech(subtitles_file, verbose=False):
     os.makedirs(cache_dir, exist_ok=True)
+
+    # 读取字幕文件，其中包含字幕的编号、开始时间、文本内容
+    video_file, voice_name, subtitles = read_subtitles(subtitles_file)
 
     print(f"开始生成语音，使用音色：{voice_name}")
     print(f"视频文件：{video_file}")
     print(f"字幕文件：{subtitles_file}")
-
-    # 读取字幕文件，其中包含字幕的编号、开始时间、文本内容
-    subtitles = read_subtitles(subtitles_file)
 
     # 对所有字幕生成语音
     audio_files, duration_list = run_tts_4all(subtitles, voice_name)
@@ -210,4 +223,10 @@ def generate_speech(video_file, subtitles_file, voice_name, verbose=False):
     merge_video_audio(video_file, verbose)
 
 if __name__ == "__main__":
-    generate_speech(video_file, subtitles_file, voice_name)
+    import argparse
+    parser = argparse.ArgumentParser(description="生成语音")
+    parser.add_argument("subtitle_file", type=str, help="字幕文件路径")
+    args = parser.parse_args()
+    subtitles_file = args.subtitle_file
+
+    generate_speech(subtitles_file)
