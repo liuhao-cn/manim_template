@@ -18,16 +18,22 @@ Manim是一个由3Blue1Brown（Grant Sanderson）开发的Python库，用于创�
 - pip（Python包管理器）
 - FFmpeg（用于视频渲染）
 
+### 克隆代码仓库：
 
-### 一键安装
+```bash
+git clone https://github.com/liuhao-cn/manim_template.git
+cd manim_template
+```
 
-下载 install_manim.sh 到用户目录，然后执行：
+### 一键安装（后面也介绍了可选的手动安装方法）
+
+确定进入代码仓库后：
 ```bash
 chmod +x install_manim.sh
 ./install_manim.sh
 ```
 
-### 手动安装
+### 手动安装（1-5，可选）
 
 如果希望自行控制整个安装流程，请按以下提示进行：
 
@@ -81,13 +87,6 @@ sudo apt install -y --ignore-missing texlive-base texlive-latex-recommended \
 sudo apt autoremove -y && sudo apt clean
 ```
 
-2. 克隆代码仓库：
-
-```bash
-git clone https://github.com/liuhao-cn/manim_template.git
-cd manim_template
-```
-
 3. 创建并激活虚拟环境（推荐）：
 
 ```bash
@@ -108,8 +107,7 @@ pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/si
 pip install -r requirements.txt
 ```
 
-
-## API密钥设置
+5. API密钥设置
 
 本项目的语音部分使用阿里云语音合成服务，请按以下方式设置API密钥或修改 tts_engine_aliyun 改用你偏好的API：
 ```bash
