@@ -34,14 +34,14 @@ error_msg() {
 
 # 步骤 1：替换 APT 源（动态适配系统版本）
 replace_apt_source() {
-    status_msg "正在配置阿里云APT镜像源（适配$UBUNTU_CODENAME）..."
+    status_msg "正在更换APT镜像源（适配$UBUNTU_CODENAME）..."
     
     # 备份原配置文件
     sudo cp "$APT_MIRROR_FILE" "${APT_MIRROR_FILE}.bak" || error_msg "备份原APT源失败"
     
     # 生成新版源配置
     sudo tee "$APT_MIRROR_FILE" > /dev/null <<EOF
-# 阿里云 Ubuntu 镜像源（自动适配系统版本）
+# 国内 Ubuntu 镜像源（自动适配系统版本）
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME} main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-security main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${UBUNTU_CODENAME}-updates main restricted universe multiverse
@@ -59,8 +59,18 @@ EOF
     sudo apt clean
     sudo apt update || {
         echo -e "\n\033[1;33m[!] 检测到镜像源更新失败，尝试备用方案...\033[0m"
-        sudo sed -i 's/mirrors.aliyun.com/mirrors.cloud.aliyuncs.com/g' "$APT_MIRROR_FILE"
-        sudo apt update || error_msg "APT 更新失败"
+        # 尝试恢复为官方源
+        sudo cp "${APT_MIRROR_FILE}.bak" "$APT_MIRROR_FILE" || {
+            echo -e "\033[1;33m[!] 无法恢复备份，手动配置官方源\033[0m"
+            sudo tee "$APT_MIRROR_FILE" > /dev/null <<EOF
+# Ubuntu 官方源
+deb http://archive.ubuntu.com/ubuntu/ ${UBUNTU_CODENAME} main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ ${UBUNTU_CODENAME}-updates main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ ${UBUNTU_CODENAME}-security main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ ${UBUNTU_CODENAME}-backports main restricted universe multiverse
+EOF
+        }
+        sudo apt update || error_msg "APT 更新失败，请手动检查网络连接和源配置"
     }
     success_msg "APT 源配置完成"
 }
@@ -160,7 +170,7 @@ main() {
     
     echo
     success_msg "安装完成！"
-    echo -e "后续操作指南：\n1. 激活 API 密钥：source ~/.bashrc\n2.进入项目目录：cd manim_template\n3. 激活虚拟环境：source manim/bin/activate\n4. 开始使用模板创建动画"
+    echo -e "后续操作指南：\n1. 激活 API 密钥：source ~/.bashrc\n2.进入项目目录：cd manim_template\n3. 激活虚拟环境：source manim/bin/activate\n4. 测试动画模板：python3 template.py\n"
 }
 
 # 执行主流程
