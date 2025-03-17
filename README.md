@@ -12,12 +12,6 @@ Manim是一个由3Blue1Brown（Grant Sanderson）开发的Python库，用于创�
 
 ## 安装指南
 
-### 前提条件
-
-- Python 3.8+
-- pip（Python包管理器）
-- FFmpeg（用于视频渲染）
-
 ### 克隆代码仓库：
 
 ```bash
@@ -25,15 +19,91 @@ git clone https://github.com/liuhao-cn/manim_template.git
 cd manim_template
 ```
 
-### 一键安装（后面也介绍了可选的手动安装方法）
+### 一键安装（文件尾部介绍了可选的手动安装方法）
 
-确定进入代码仓库后：
+确定已经进入代码仓库后：
 ```bash
 chmod +x install_manim.sh
 ./install_manim.sh
 ```
 
-### 手动安装（1-5，可选）
+
+## 使用方法：
+
+将 template.py 和合适的提示词一起喂给大模型进行代码生成。可以参考以下 AI 提示词，
+```AI prompt
+请基于我提供给你的模板设计一套动画用于展示 xxx，注意遵循以下要求：
+- 生成结果应该是一份新的代码，例如 ai_code.py
+- 注意使用新的类名并随之更新各输出文件名
+- 使用模板自带的字幕和计时相关功能，根据场景需要选择 ThreeDScene 或 Scene 类
+- 动画要丰富、深刻、生动、易懂，并添加充足的字幕说明
+- 字幕说明的时间要精确计算，默认取 wait=0 即按字数计算
+- 你要预估每个字幕的后续动画时间，如果这个时间很长，你应该适当削减字幕的 wait
+- 设计字幕时要使用两套文本，一套包含 latex 格式公式用于显示，一套纯文本专用于 tts 阅读，注意 update_subtitle 已经支持两套字幕
+- 每个动画动作都要明确地设定 run_time 参数，并相应维护动画计时器 animation_timer
+- 先给出详细的策划，经我审核后再进行动画代码的生成
+```
+
+## 主要参数配置
+在`template.py`中可调整：
+```python
+voice_name = "longlaotie"  # 推荐发音人：longlaotie/loongbella
+self.time_per_char = 0.28  # 朗读字幕时每个字符的默认占用时间
+```
+
+## 运行方式
+```bash
+python3 ai_code.py -ql  # -ql、-qm、-qh、-qk = 480、720、1080、2160 画质
+```
+默认情况下会自动完成配音，如果配音字幕不同步，应该优先检查是否每个 run_time 后面都有对应的时间累加代码。如果只需要微调或者只需要修改音色，也可以手动打开 media 目录下对应的字幕文件编辑字幕时间，并在第一行调整音色，然后运行：
+```bash
+python3 generate_speech.py path/to/your/subtitle/file
+```
+部分可选音色代码和对应的阿里云官方介绍包括：
+
+| 音色代码      | 描述|
+|-|-|
+| longwan       | 龙婉声音温柔甜美，富有亲和力，给人温暖陪伴感。|
+| longcheng     | 龙橙声音温柔清澈，富有亲和力，是邻家的温暖大哥哥。|
+| longhua       | 龙华声音活泼可爱，有趣生动，是孩子们的好朋友。|
+| longxiaochun  | 龙小淳的嗓音如丝般柔滑，温暖中流淌着亲切与抚慰，恰似春风吹过心田。|
+| longxiaoxia   | 龙小夏以温润磁性的声线，宛如夏日细雨，悄然滋润听者心灵，营造恬静氛围。|
+| longjing      | 龙婧的嗓音庄重而凛然，精准传达严肃主题，赋予话语以权威与力量。|
+| longyue       | 龙悦以抑扬顿挫、韵味十足的评书腔调，生动讲述故事，引领听众步入传奇世界！|
+| longxiaobai   | 龙小白以轻松亲和的声调，演绎闲适日常，其嗓音如邻家女孩般亲切自然。|
+| longshu       | 龙书以专业、沉稳的播报风格，传递新闻资讯，其嗓音富含权威与信赖感。|
+| longyuan      | 龙媛以细腻入微、情感丰富的嗓音，将小说人物与情节娓娓道来，引人入胜。|
+| longshuo      | 龙硕嗓音充满活力与阳光，如暖阳照耀，增添无限正能量，使人精神焕发。|
+| longlaotie    | 龙老铁以纯正东北腔，豪爽直率，幽默风趣，为讲述增添浓郁地方特色与生活气息。|
+| loongbella    | Bella2.0 以精准干练的播报风格，传递全球资讯，其专业女声犹如新闻现场的引导者。|
+| loongstella   | Stella2.0以其飒爽利落的嗓音，演绎独立女性风采，展现坚韧与力量之美。|
+| longjielidou  | 龙杰力豆以和煦如春阳的童声娓娓道来，透出了欣欣向荣的生命力，温暖每一个倾听的耳朵。|
+
+可参考阿里云语音合成体验页面寻找更多音色，或使用序列猴子等 tts 引擎。
+
+
+## 项目结构
+
+```
+manim_template/
+├── media/             # manim 场景和语音等缓存文件
+├── template.py        # 主模板
+├── generate_speech.py # 配音模块
+├── requirements.txt   # 项目依赖
+└── README.md          # 项目说明
+```
+
+## 贡献指南
+
+欢迎提交问题和拉取请求！
+
+## 许可证
+
+MIT 
+
+
+
+## 附录：手动安装方法
 
 如果希望自行控制整个安装流程，请按以下提示进行：
 
@@ -115,70 +185,3 @@ echo "export ALIYUNAPI='your_api_key_here'" >> ~/.bashrc
 source ~/.bashrc
 source manim/bin/activate
 ```
-
-## 使用方法：
-
-将 template.py 和合适的提示词一起喂给大模型进行代码生成。可以参考以下 AI 提示词，
-```AI prompt
-请基于我提供给你的模板设计一套动画用于展示 xxx，注意遵循以下要求：
-- 生成结果应该是一份新的代码，例如 ai_code.py
-- 注意使用新的类名并随之更新各输出文件名
-- 使用模板自带的字幕和计时相关功能，根据场景需要选择 ThreeDScene 或 Scene 类
-- 动画要丰富、深刻、生动、易懂，并添加充足的字幕说明
-- 字幕说明的时间要精确计算，默认取 wait=0 即按字数计算
-- 你要预估每个字幕的后续动画时间，如果这个时间很长，你应该适当削减字幕的 wait
-- 设计字幕时要使用两套文本，一套包含 latex 格式公式用于显示，一套纯文本专用于 tts 阅读，注意 update_subtitle 已经支持两套字幕
-- 每个动画动作都要明确地设定 run_time 参数，并相应维护动画计时器 animation_timer
-- 先给出详细的策划，经我审核后再进行动画代码的生成
-```
-
-## 主要参数配置
-在`template.py`中可调整：
-```python
-# 视频质量设置
-quality = "l"  # 可选 l(480p), m(720p), h(1080p), k(4K)
-preview = ""  # 改为 -p 可自动预览
-
-# 语音合成设置
-voice_name = "longlaotie"  # 推荐发音人：longlaotie/loongbella
-self.time_per_char = 0.28  # 每个字符的默认持续时间
-```
-
-
-## FFmpeg 安装
-
-manim 需要 FFmpeg 来处理音频和视频（根据文档，最新版本或可跳过）。请按照以下步骤安装：
-
-### Windows 安装
-1. 下载 FFmpeg：访问 [FFmpeg官网](https://ffmpeg.org/download.html) 或 [FFmpeg Windows 构建](https://www.gyan.dev/ffmpeg/builds/)
-2. 下载 "FFmpeg Git Full Build" 压缩包并解压
-3. 将解压后的 bin 文件夹路径添加到系统环境变量 PATH 中
-4. 重启命令提示符或 PowerShell，输入 `ffmpeg -version` 验证安装
-
-### macOS 安装
-brew install ffmpeg
-
-### Ubuntu 安装
-```
-sudo apt update
-sudo apt install ffmpeg
-```
-
-## 项目结构
-
-```
-manim_template/
-├── media/             # manim 场景和语音等缓存文件
-├── template.py        # 主模板
-├── generate_speech.py # 配音模块
-├── requirements.txt   # 项目依赖
-└── README.md          # 项目说明
-```
-
-## 贡献指南
-
-欢迎提交问题和拉取请求！
-
-## 许可证
-
-MIT 
