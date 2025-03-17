@@ -19,12 +19,19 @@ Manim是一个由3Blue1Brown（Grant Sanderson）开发的Python库，用于创�
 - FFmpeg（用于视频渲染）
 
 
-### 安装步骤
+### 一键安装
+
+下载 install_manim.sh 到用户目录，然后执行：
+```bash
+chmod +x install_manim.sh
+./install_manim.sh
+```
+
+### 手动安装
+
+如果希望自行控制整个安装流程，请按以下提示进行：
 
 1. 安装系统级应用：
-
-如果对系统级应用非常熟悉，这里可以自行安装必要的部分。
-如果此前已经安装过系统级应用，可以跳过这一步。
 
 首先，默认 apt 源速度在国内有可能速度太慢，可以先如下替换。
 如果安装速度正常可以跳过该步骤。
@@ -50,16 +57,27 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted 
 完成源替换后开始安装系统级应用
 ```bash
 sudo apt update
-sudo apt install -y \
-    build-essential python3-dev python3-pip python3-venv git wget curl \
-    texlive-full texlive-latex-extra texlive-fonts-extra texlive-xetex latexmk \
-    ffmpeg sox libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 libffi-dev \
-    libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libosmesa6-dev \
-    libxi-dev libxrandr-dev libxinerama-dev libxcursor-dev libxext-dev \
-    fonts-dejavu fonts-freefont-ttf fonts-noto fonts-roboto fonts-lmodern fonts-cmu \
-    xclip xsel libopenmpi-dev libssl-dev \
-    libavdevice-dev libavfilter-dev libavformat-dev libavcodec-dev \
-    libswresample-dev libswscale-dev libpostproc-dev
+
+sudo apt install -y build-essential python3-dev python3-pip python3-venv git
+
+sudo apt install -y ffmpeg libavdevice-dev sox
+
+sudo apt install -y libcairo2-dev libpango1.0-dev \
+    libgl1-mesa-dev libxi-dev libxrandr-dev \
+    libgles2-mesa-dev libosmesa6-dev
+
+sudo apt install -y fonts-dejavu fonts-freefont-ttf fonts-noto-cjk
+
+sudo apt-mark hold texlive-context
+
+sudo apt install -y --ignore-missing texlive-base texlive-latex-recommended \
+    texlive-latex-extra texlive-fonts-recommended \
+    texlive-lang-chinese texlive-lang-cyrillic cm-super \
+    texlive-xetex
+
+# 如果 latex 安装有问题，可以尝试这个：
+# sudo apt install -y texlive texlive-xetex texlive-lang-chinese 
+
 sudo apt autoremove -y && sudo apt clean
 ```
 
@@ -99,11 +117,6 @@ echo "export ALIYUNAPI='your_api_key_here'" >> ~/.bashrc
 source ~/.bashrc
 source manim/bin/activate
 ```
-或者在项目目录下添加并编辑 .env 添加 ALIYUNAPI='your_api_key_here'
-
-**重要安全提示**：
-- 切勿将`.env`文件提交到版本控制系统
-- 建议将`.env`添加到`.gitignore`
 
 ## 使用方法：
 
