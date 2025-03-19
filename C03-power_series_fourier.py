@@ -476,7 +476,13 @@ if __name__ == "__main__":
     }; quality_str = quality_to_str.get(quality)
 
     # 构建并执行 manim 命令，-q 指定渲染质量，-p 指定预览，__file__ 指定当前文件，PowerFunctionFourierSeries 指定类名
-    cmd = f"manim -q{quality} {__file__} PowerFunctionFourierSeries"
+    # 计算并输出渲染时间
+    import time
+    start_time = time.time()
+    cmd = f"manim -q{quality} {__file__} {class_name}"
+    result = subprocess.run(cmd, shell=True)
+    render_time = time.time() - start_time
+    print(f"渲染完成！总耗时：{render_time:.2f}秒")
 
     result = subprocess.run(cmd, shell=True)
 
