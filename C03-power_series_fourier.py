@@ -484,13 +484,13 @@ if __name__ == "__main__":
     render_time = time.time() - start_time
     print(f"渲染完成！总耗时：{render_time:.2f}秒")
 
-    from generate_speech import generate_speech
-    # 根据 manim 的输出结构确定文件路径
-    # 视频文件路径：media/videos/ai_code/质量标识/类名.mp4
-    # 字幕文件路径：media/subtitles.jsonl
-    video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
+    # from generate_speech import generate_speech
+    # # 根据 manim 的输出结构确定文件路径
+    # # 视频文件路径：media/videos/ai_code/质量标识/类名.mp4
+    # # 字幕文件路径：media/subtitles.jsonl
+    # video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
     
-    # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
-    generate_speech(buff.subtitle_file)
+    # # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
+    # generate_speech(buff.subtitle_file)
     
-    print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
+    # print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
