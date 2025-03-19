@@ -487,6 +487,6 @@ if __name__ == "__main__":
     video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
     
     # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
-    generate_speech(video_file, buff.subtitle_file, voice_name)
+    generate_speech(buff.subtitle_file)
     
     print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
