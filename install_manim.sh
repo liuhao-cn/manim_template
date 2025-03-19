@@ -56,8 +56,8 @@ EOF
 
     # 优化更新流程
     sudo rm -rf /var/lib/apt/lists/*
-    sudo apt clean
-    sudo apt update || {
+    sudo apt-get clean
+    sudo apt-get update || {
         echo -e "\n\033[1;33m[!] 检测到镜像源更新失败，尝试备用方案...\033[0m"
         # 尝试恢复为官方源
         sudo cp "${APT_MIRROR_FILE}.bak" "$APT_MIRROR_FILE" || {
@@ -70,7 +70,7 @@ deb http://archive.ubuntu.com/ubuntu/ ${UBUNTU_CODENAME}-security main restricte
 deb http://archive.ubuntu.com/ubuntu/ ${UBUNTU_CODENAME}-backports main restricted universe multiverse
 EOF
         }
-        sudo apt update || error_msg "APT 更新失败，请手动检查网络连接和源配置"
+        sudo apt-get update || error_msg "APT 更新失败，请手动检查网络连接和源配置"
     }
     success_msg "APT 源配置完成"
 }
@@ -80,35 +80,35 @@ install_dependencies() {
     status_msg "正在安装系统依赖..."
     
     # 基础编译工具链
-    sudo apt install -y build-essential python3-dev python3-pip python3-venv git
+    sudo apt-get install -y build-essential python3-dev python3-pip python3-venv git
     
     # 多媒体处理相关
-    sudo apt install -y ffmpeg libavdevice-dev sox
+    sudo apt-get install -y ffmpeg libavdevice-dev sox
     
     # 图形渲染依赖
-    sudo apt install -y libcairo2-dev libpango1.0-dev \
+    sudo apt-get install -y libcairo2-dev libpango1.0-dev \
         libgl1-mesa-dev libxi-dev libxrandr-dev \
         libgles2-mesa-dev libosmesa6-dev
     
     # 字体支持
-    sudo apt install -y fonts-dejavu fonts-freefont-ttf fonts-noto-cjk
+    sudo apt-get install -y fonts-dejavu fonts-freefont-ttf fonts-noto-cjk
     
     # TeXLive 组件（动态适配版本）
     if [[ "$UBUNTU_CODENAME" == "focal" || "$UBUNTU_CODENAME" == "jammy" ]]; then
         # 执行 tex 最小化安装组合
-        sudo apt install -y --ignore-missing texlive-base texlive-latex-recommended \
+        sudo apt-get install -y --ignore-missing texlive-base texlive-latex-recommended \
             texlive-latex-extra texlive-fonts-recommended \
             texlive-lang-chinese texlive-lang-cyrillic cm-super \
             texlive-xetex && \
         sudo apt-mark hold texlive-context
     else
         # 原有轻量安装已不含 context
-        sudo apt install -y texlive texlive-xetex texlive-lang-chinese
+        sudo apt-get install -y texlive texlive-xetex texlive-lang-chinese
     fi
 
     
     # 清理系统
-    sudo apt autoremove -y && sudo apt clean
+    sudo apt-get autoremove -y && sudo apt-get clean
     success_msg "系统依赖安装完成"
 }
 
