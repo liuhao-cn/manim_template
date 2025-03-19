@@ -484,8 +484,6 @@ if __name__ == "__main__":
     render_time = time.time() - start_time
     print(f"渲染完成！总耗时：{render_time:.2f}秒")
 
-    result = subprocess.run(cmd, shell=True)
-
     from generate_speech import generate_speech
     # 根据 manim 的输出结构确定文件路径
     # 视频文件路径：media/videos/ai_code/质量标识/类名.mp4
