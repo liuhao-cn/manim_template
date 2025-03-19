@@ -586,9 +586,13 @@ if __name__ == "__main__":
         "k": "2160p60"
     }; quality_str = quality_to_str.get(quality)
 
-    # 构建并执行 manim 命令
+    # 构建并执行 manim 命令，并计时
+    import time
+    start_time = time.time()
     cmd = f"manim -q{quality} {__file__} {class_name}"
     result = subprocess.run(cmd, shell=True)
+    render_time = time.time() - start_time
+    print(f"渲染完成！总耗时：{render_time:.2f}秒")
 
     # 导入语音生成模块
     try:
