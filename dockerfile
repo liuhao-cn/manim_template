@@ -1,4 +1,4 @@
-# 阶段一：构建环境（基于 Ubuntu 22.04）
+# 基于 Ubuntu 22.04
 FROM ubuntu:22.04 as builder
 
 # 基础配置
@@ -39,7 +39,7 @@ RUN echo "deb ${APT_SOURCE} ${UBUNTU_CODENAME} main restricted universe multiver
     texlive-xetex
 
 RUN pip config set global.index-url ${PY_MIRROR} && \
-    cd manim_template && \
+    cd /manim_template && \
     python3 -m venv ./manim && \
     . ./manim/bin/activate && \
     pip install -r requirements.txt && \
