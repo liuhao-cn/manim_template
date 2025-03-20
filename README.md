@@ -27,6 +27,35 @@ chmod +x install_manim.sh
 ./install_manim.sh
 ```
 
+### Docker 环境（新增）
+
+如果您想使用 Docker 环境运行项目，我们提供了现成的 Dockerfile：
+
+1. 构建 Docker 镜像：
+```bash
+docker build -t manim-template .
+```
+
+2. 运行 Docker 容器：
+```bash
+# 运行交互式环境
+docker run -it --rm -v $(pwd):/manim/manim_template manim-template
+
+# 直接执行特定动画脚本
+docker run --rm -v $(pwd):/manim/manim_template manim-template python template.py -ql
+```
+
+3. 配置阿里云 API 密钥：
+```bash
+docker run --rm -v $(pwd):/manim/manim_template -e ALIYUNAPI="您的API密钥" manim-template python template.py -ql
+```
+
+使用 Docker 的优势：
+- 环境隔离，避免依赖冲突
+- 无需手动安装系统依赖
+- 支持跨平台使用（Windows、macOS 和 Linux）
+- 可在不同机器上保持一致的运行环境
+
 
 ## 使用方法：
 
