@@ -119,15 +119,15 @@ setup_venv() {
     python3 -m venv manim || error_msg "创建虚拟环境失败"
     source manim/bin/activate || error_msg "激活虚拟环境失败"
     
-    python -m pip install --upgrade pip || error_msg "升级 pip 失败"
-    pip config set global.index-url "$PY_MIRROR" || error_msg "配置 PyPI 镜像失败"
+    python3 -m pip install --upgrade pip || error_msg "升级 pip 失败"
+    pip3 config set global.index-url "$PY_MIRROR" || error_msg "配置 PyPI 镜像失败"
     success_msg "虚拟环境配置完成"
 }
 
 # 步骤 4：安装 Python 依赖
 install_python_deps() {
     status_msg "正在安装 Python 依赖..."
-    pip install -r requirements.txt || error_msg "安装依赖失败"
+    pip3 install -r requirements.txt || error_msg "安装依赖失败"
     success_msg "Python 依赖安装完成"
 }
 
