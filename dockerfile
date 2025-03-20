@@ -8,9 +8,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
     APT_SOURCE="http://mirrors.aliyun.com/ubuntu/" \
     UBUNTU_CODENAME="jammy" \
-    PY_MIRROR="https://mirrors.aliyun.com/pypi/simple/"
+    PY_MIRROR="https://pypi.tuna.tsinghua.edu.cn/simple/"
 
-WORKDIR /manim
+WORKDIR /manim_template
+
+COPY . /manim_template
 
 # 配置APT镜像源（阿里云）
 RUN echo "deb ${APT_SOURCE} ${UBUNTU_CODENAME} main restricted universe multiverse" > /etc/apt/sources.list && \
@@ -24,9 +26,7 @@ RUN echo "deb ${APT_SOURCE} ${UBUNTU_CODENAME} main restricted universe multiver
     echo "deb-src ${APT_SOURCE} ${UBUNTU_CODENAME}-proposed main restricted universe multiverse" >> /etc/apt/sources.list && \
     echo "deb-src ${APT_SOURCE} ${UBUNTU_CODENAME}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install -y git sudo lsb-release
-
-RUN apt-get install -y \
+    apt-get install -y git sudo lsb-release \
     build-essential python3-dev python3-pip python3-venv git \
     ffmpeg libavdevice-dev sox \
     libcairo2-dev libpango1.0-dev \
@@ -38,8 +38,7 @@ RUN apt-get install -y \
     texlive-lang-chinese texlive-lang-cyrillic cm-super \
     texlive-xetex
 
-RUN git clone https://github.com/liuhao-cn/manim_template.git && \
-    pip config set global.index-url ${PY_MIRROR} && \
+RUN pip config set global.index-url ${PY_MIRROR} && \
     cd manim_template && \
     python3 -m venv ./manim && \
     . ./manim/bin/activate && \
@@ -47,8 +46,8 @@ RUN git clone https://github.com/liuhao-cn/manim_template.git && \
     python -m pip install --upgrade pip
 
 # 设置工作目录和PATH
-WORKDIR /manim/manim_template
-ENV PATH="/manim/manim_template/manim/bin:$PATH"
+WORKDIR /manim_template
+ENV PATH="/manim_template/manim/bin:$PATH"
 
 # 启动时自动进入项目目录并激活虚拟环境
-CMD ["/bin/bash", "-c", "cd /manim/manim_template && source /manim/manim_template/manim/bin/activate && /bin/bash"]
+CMD ["/bin/bash", "-c", "cd /manim_template && source /manim_template/manim/bin/activate && /bin/bash"]
