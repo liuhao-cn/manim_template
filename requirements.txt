@@ -2,5 +2,5 @@ manim
 av
 pydub
 dashscope
+ninja
 meson>=0.63.3
-ninja>=1.12.0
