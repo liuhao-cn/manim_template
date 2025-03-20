@@ -26,7 +26,7 @@ RUN echo "deb ${APT_SOURCE} ${UBUNTU_CODENAME} main restricted universe multiver
     echo "deb-src ${APT_SOURCE} ${UBUNTU_CODENAME}-proposed main restricted universe multiverse" >> /etc/apt/sources.list && \
     echo "deb-src ${APT_SOURCE} ${UBUNTU_CODENAME}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install -y git sudo lsb-release \
+    apt-get install -y git sudo lsb-release apt-utils \
     build-essential python3-dev python3-pip python3-venv git \
     ffmpeg libavdevice-dev sox \
     libcairo2-dev libpango1.0-dev \
