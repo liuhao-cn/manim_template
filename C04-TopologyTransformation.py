@@ -54,27 +54,28 @@ class TopologyTransformation(Scene):
 
     def construct(self):
         # 开场：介绍单连通区域和拓扑变换
-        self.update_subtitle(r"\text{单连通区域拓扑变换}", "欢迎观看单连通区域拓扑变换演示")
+        self.update_subtitle(r"\text{下面我们演示单连通区域的拓扑变换}", 
+                             "下面我们演示单连通区域的拓扑变换")
         
         # 介绍单连通概念
-        self.update_subtitle(r"\text{单连通区域：任意闭合曲线可收缩为一点}", 
+        self.update_subtitle(r"\text{单连通区域是指其中任意闭合曲线都可以连续收缩为一点的区域}", 
                            "单连通区域是指其中任意闭合曲线都可以连续收缩为一点的区域")
         
         # 介绍拓扑等价概念
-        self.update_subtitle(r"\text{拓扑等价：可通过连续变形相互转化，但不能撕裂或粘合}", 
-                           "拓扑等价是指两个图形可以通过连续变形相互转化，不允许撕裂或粘合")
+        self.update_subtitle(r"\text{而拓扑等价是指两个图形可以通过连续变形相互转化，但不能撕裂或粘合}", 
+                           "而拓扑等价是指两个图形可以通过连续变形相互转化，但不能撕裂或粘合")
 
         # 介绍本演示的主要内容
-        self.update_subtitle(r"\text{单连通区域定理：所有单连通区域拓扑等价于圆}", 
+        self.update_subtitle(r"\text{根据拓扑学原理，所有单连通区域都拓扑等价于圆形}", 
                            "根据拓扑学原理，所有单连通区域都拓扑等价于圆形")
 
         # 介绍接下来的演示内容
-        self.update_subtitle(r"\text{下面将展示几种典型单连通区域变形为圆的过程}", 
-                           "接下来我们将展示几种典型单连通区域连续变形为圆形的过程")
+        self.update_subtitle(r"\text{接下来我们将展示几种单连通区域是如何连续变形为圆形的}", 
+                           "接下来我们将展示几种单连通区域是如何连续变形为圆形的")
         
         # 1. 方形变换
         square = Square(side_length=2, color=BLUE)
-        self.update_subtitle(r"\text{方形单连通区域}", "首先展示方形区域")
+        self.update_subtitle(r"\text{首先是方形区域}", "首先是方形区域")
         self.play(Create(square), run_time=2)
         self.animation_timer += 2  # 更新计时器
         
@@ -102,14 +103,14 @@ class TopologyTransformation(Scene):
         self.animation_timer += 0.1  # 更新计时器
 
         # 2. 五角星变换
-        self.update_subtitle(r"\text{五角星单连通区域}", "接下来是五角星形")
+        self.update_subtitle(r"\text{接下来是五角星形区域}", "接下来是五角星形区域")
         star = Star(n=5, outer_radius=1, color=GREEN)
         # 确保五角星朝向一致
         star.rotate(-PI/2)  # 调整初始方向
         self.play(Create(star), run_time=2)
         self.animation_timer += 2  # 更新计时器
         
-        self.update_subtitle(r"\text{连续变形过程}", "正在变形为五边形")
+        self.update_subtitle(r"\text{连续变形过程}", "先变形为五边形")
         
         # 创建正五边形作为过渡形状（不添加到场景中）
         pentagon = RegularPolygon(n=5, color=GREEN)
@@ -124,7 +125,7 @@ class TopologyTransformation(Scene):
         self.animation_timer += 1  # 更新计时器
         
         # 从五边形变形为圆形
-        self.update_subtitle(r"\text{继续变形为圆形}", "从五边形变形为圆形")
+        self.update_subtitle(r"\text{继续变形为圆形}", "再从五边形变为圆形")
         
         # 创建圆形作为变换目标（不添加到场景中）
         target_circle = Circle(radius=1, color=RED)
@@ -143,7 +144,7 @@ class TopologyTransformation(Scene):
         self.animation_timer += 0.1  # 更新计时器
 
         # 3. 阿基米德螺线区域变换 - 直接开始
-        self.update_subtitle(r"\text{阿基米德螺线区域}", "现在展示阿基米德螺线区域")
+        self.update_subtitle(r"\text{阿基米德螺线区域}", "现在是一个阿基米德螺线区域")
         
         # 创建螺线区域（带宽度的闭合区域）
         def spiral_func(t, k=1.0):
@@ -157,7 +158,7 @@ class TopologyTransformation(Scene):
             lambda t: spiral_func(t),
             t_range=[0, 6*PI],
             color=PURPLE
-        ).set_stroke(width=15)
+        ).set_stroke(width=30)
         
         self.play(Create(spiral_region), run_time=2)
         self.animation_timer += 2  # 更新计时器
@@ -166,7 +167,8 @@ class TopologyTransformation(Scene):
         self.animation_timer += 1  # 更新计时器
         
         # 逐步减小k值来展开螺线（更精细的步骤）
-        self.update_subtitle(r"\text{逐步展开螺线}", "正在逐步展开螺线")
+        self.update_subtitle(r"\text{首先要把螺线打开}", 
+                             "这个区域不能直接撑开成圆形，但是可以先把螺线打开，然后再变形", wait=1)
         
         # 为了提高效率，这里可以合并一些帧
         step_count = 200
@@ -175,7 +177,7 @@ class TopologyTransformation(Scene):
                 lambda t: spiral_func(t, k),
                 t_range=[0, 6*PI],
                 color=PURPLE
-            ).set_stroke(width=15)
+            ).set_stroke(width=30)
             self.play(Transform(spiral_region, new_spiral), run_time=0.05)
             self.animation_timer += 0.05  # 更新计时器
         
@@ -190,20 +192,17 @@ class TopologyTransformation(Scene):
         center_y = np.median(points[:, 1])
         center = np.array([center_x, center_y, 0])
         
-        # 边缘高度
-        edge_height = 0.3
-        
         # 创建矩形边缘（只有边框，无填充）
         rectangle_edge = Rectangle(
             width=bar_length,
-            height=edge_height-0.1,
+            height=0.22,
             color=PURPLE,
             stroke_width=5,  # 使用细边缘
             fill_opacity=0    # 无填充
         ).move_to(center)
         
         # 先保留展开的螺线，并添加矩形边缘
-        self.update_subtitle(r"\text{计算条形边缘}", "计算展开后的条形边缘")
+        self.update_subtitle(r"\text{提取边缘}", "打开为条形后，再提取边缘")
         self.play(FadeIn(rectangle_edge), run_time=1.5)
         self.animation_timer += 1.5  # 更新计时器
         
@@ -215,7 +214,7 @@ class TopologyTransformation(Scene):
         self.animation_timer += 1  # 更新计时器
         
         # 将矩形边缘变形为圆形边缘
-        self.update_subtitle(r"\text{边缘变形为圆形}", "然后将条形边缘变形为圆形")
+        self.update_subtitle(r"\text{撑开为圆形}", "然后按边缘撑开就可以变形为圆形")
         circle_edge = Circle(
             radius=bar_length/2,  # 直径等于条形长度
             color=PURPLE,
@@ -242,7 +241,7 @@ class TopologyTransformation(Scene):
         
         # 最终总结
         self.update_subtitle(r"\text{所有单连通区域都拓扑等价于圆}", 
-                           "演示完成，谢谢观看")
+                           "演示完成，谢谢观看!", wait=4)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="单连通区域变换动画")
