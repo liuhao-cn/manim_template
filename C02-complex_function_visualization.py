@@ -1,10 +1,12 @@
 from manim import *
 import json
 import os
+import shutil
 import argparse
 import numpy as np
 import matplotlib.cm as cm
 import subprocess
+from generate_speech import generate_speech
 
 # 定义复函数
 def complex_function1(z):
@@ -68,8 +70,8 @@ class ComplexFunctionVisualization(Scene):
         # 初始化总时间计数器
         self.animation_timer = 0.0
         self.subtitle_id = 0
+        self.time_per_char = 0.28      # 单字符语音时间
         self.default_output_dir = 'media'
-        self.time_per_char = 0.28
 
         # 确保缓存目录存在
         os.makedirs(self.default_output_dir, exist_ok=True)
@@ -83,21 +85,22 @@ class ComplexFunctionVisualization(Scene):
         else:
             os.makedirs(os.path.dirname(self.subtitle_file), exist_ok=True)
         
+        # 初始化字幕对象
         self.subtitle = Text("", font_size=28)
     
-    def update_subtitle(self, text, text_voice=None, wait=0.0, fontsize=24):
+    def update_subtitle(self, text_subtitle, text_voice=None, wait=0.0, fontsize=24):
         """更新字幕并同步写入字幕文件，包括时间。注意需要内置动画计时器支持"""
-        # 如果没有提供语音文本，使用字幕文本
-        if text_voice is None:
-            text_voice = text
-            
-        # 移除旧字幕
+        # 如果有旧字幕，先移除
         if hasattr(self, 'subtitle') and self.subtitle is not None:
             self.remove(self.subtitle)
         
-        if text:
+        # 如果没有提供语音文本，使用字幕文本
+        if text_voice is None:
+            text_voice = text_subtitle
+            
+        if text_subtitle:
             # 创建新字幕
-            new_subtitle = Text(text, font_size=fontsize)
+            new_subtitle = Text(text_subtitle, font_size=fontsize)
             new_subtitle.to_edge(DOWN)
 
             # 将字幕添加到场景中
@@ -105,7 +108,7 @@ class ComplexFunctionVisualization(Scene):
             self.add(new_subtitle) # 2D 模式下
             self.subtitle = new_subtitle
 
-            # 将字幕记录到文件，包括编号、开始时间、文本内容
+            # 将字幕记录到 jsonl 文件，包括编号、开始时间、文本内容
             self.subtitle_id += 1
             subtitle_json = {
                 "id":           self.subtitle_id, 
@@ -118,14 +121,12 @@ class ComplexFunctionVisualization(Scene):
                 f.write(json.dumps(subtitle_json, ensure_ascii=False) + '\n')
 
         # 默认情况下根据字符数目自动决定等待时间
-        if wait==0:
-            wait = len(text) * self.time_per_char
-        else:
-            wait = wait
+        if wait == 0:
+            wait = len(text_voice) * self.time_per_char
             
+        # 等待语音播放并更新动画计时器
         self.wait(wait); self.animation_timer += float(wait)
     
-
     def demonstrate_path(self, complex_plane, function, path_type_text, path_name, path_creator):
         """演示特定路径上的函数变化
         
@@ -562,48 +563,70 @@ class ComplexFunctionVisualization(Scene):
     
 
 
-# 主函数
+# 主函数更新
 if __name__ == "__main__":
     # 从命令行输入质量参数
-    parser = argparse.ArgumentParser(description="运行模板动画")
+    parser = argparse.ArgumentParser(description="运行复函数可视化动画")
     parser.add_argument("--quality", "-q", type=str, choices=["l", "m", "h", "k"], default="l",
                         help="动画质量：l(低), m(中), h(高), k(4K)")
+    parser.add_argument("--preview", "-p", action="store_true",
+                        help="是否自动预览")
+    parser.add_argument("--force", "-f", action="store_true",
+                        help="是否强制重新渲染")
+    parser.add_argument("--keep-cache", "-k", action="store_true",
+                        help="是否保留缓存文件不清除")
     args = parser.parse_args()
 
-    # 定义 manim 命令行参数
-    quality = args.quality  # 从命令行参数获取质量设置
-    preview = ""   # 不自动预览，若需要预览可设为 "-p"
-    voice_name = "longlaotie"  # 可选的有 longlaotie, longbella 等
-
-    buff = ComplexFunctionVisualization() # 创建一个虚的对象用于获取字幕文件路径
+    # 创建一个临时对象用于获取字幕文件路径
+    buff = ComplexFunctionVisualization()
     class_name = buff.__class__.__name__
     script_filename = os.path.splitext(os.path.basename(__file__))
-    
+
+    # 将质量参数转换为 manim 的输出质量
+    quality = args.quality
+    voice_name = "longlaotie"  # 使用龙老铁音色
     quality_to_str = {
         "l": "480p15",
         "m": "720p30",
         "h": "1080p60",
         "k": "2160p60"
-    }; quality_str = quality_to_str.get(quality)
+    }
+    quality_str = quality_to_str.get(quality)
 
-    # 构建并执行 manim 命令，并计时
+    # 构建并执行命令
+    preview_flag = "-p" if args.preview else ""
+    force_flag = "-f" if args.force else ""
+    cmd = f"manim -q{quality} {preview_flag} {force_flag} {__file__} {class_name}"
+    print(f"执行命令: {cmd}")
+    print("正在渲染动画，请耐心等待...")
+    
+    # 计时
     import time
     start_time = time.time()
-    cmd = f"manim -q{quality} {__file__} {class_name}"
     result = subprocess.run(cmd, shell=True)
     render_time = time.time() - start_time
     print(f"渲染完成！总耗时：{render_time:.2f}秒")
 
-    # 导入语音生成模块
-    try:
-        from generate_speech import generate_speech
-        # 根据 manim 的输出结构确定文件路径
-        video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
-        
-        # 调用语音生成函数
-        generate_speech(buff.subtitle_file)
-        
-        print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
-    except ImportError:
-        print("未找到 generate_speech 模块，跳过语音生成步骤")
-        print(f"动画已通过命令行渲染完成，文件为：media/videos/complex_function_visualization/{quality_str}/ComplexFunctionVisualization.mp4") 
+    # 视频文件路径
+    video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
+    
+    # 在字幕文件第一行插入视频文件和音色信息
+    with open(buff.subtitle_file, 'r+', encoding='utf-8') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(json.dumps({"video_file": video_file, "voice_name": voice_name}, ensure_ascii=False) + '\n' + content)
+    
+    # 调用语音生成函数
+    generate_speech(buff.subtitle_file)
+    
+    print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
+    
+    # 清理缓存文件（仅当未指定保留缓存时）
+    if not args.keep_cache:
+        partial_dir = f"media/videos/{script_filename[0]}/{quality_str}/partial_movie_files"
+        if os.path.exists(partial_dir):
+            shutil.rmtree(partial_dir)
+            print(f"已清除部分电影文件缓存: {partial_dir}")
+        print("缓存清理完成！")
+    else:
+        print("根据设置保留了缓存文件") 

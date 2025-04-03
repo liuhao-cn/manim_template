@@ -1,8 +1,10 @@
 import json
 import os
+import shutil
 import subprocess
 import numpy as np
 import argparse
+from generate_speech import generate_speech
 from manim import *
 
 config.tex_template.add_to_preamble(r"""
@@ -16,11 +18,11 @@ class PowerFunctionFourierSeries(Scene):
     # 初始化代码
     def __init__(self):
         super().__init__()
-        # 初始化输出文件夹、总时间计数器、字幕编号、字幕字体大小、单字符语音时间
+        # 初始化总时间计数器
+        self.animation_timer = 0.0      # 动画计时器
+        self.subtitle_id = 0            # 字幕序号
+        self.time_per_char = 0.28       # 单字符语音时间
         self.default_output_dir = 'media'
-        self.animation_timer = 0.0
-        self.subtitle_id = 0
-        self.time_per_char = 0.28
 
         # 确保缓存目录存在
         os.makedirs(self.default_output_dir, exist_ok=True)
@@ -38,12 +40,16 @@ class PowerFunctionFourierSeries(Scene):
         self.subtitle = Text("") 
     
     # 用于构建字幕并自动计时的函数
-    def update_subtitle(self, text_subtitle, text_voice, wait=0.0, fontsize=24):
+    def update_subtitle(self, text_subtitle, text_voice=None, wait=0.0, fontsize=24):
         """更新字幕并同步写入字幕文件，包括时间。注意需要内置动画计时器支持"""
         # 如果有旧字幕，先移除
         if hasattr(self, 'subtitle') and self.subtitle is not None:
             self.remove(self.subtitle)
         
+        # 如果没有提供语音文本，使用字幕文本
+        if text_voice is None:
+            text_voice = text_subtitle
+            
         # 如果文本不为空，则创建新字幕
         if text_subtitle:
             new_subtitle = MathTex(text_subtitle, font_size=fontsize)
@@ -64,10 +70,8 @@ class PowerFunctionFourierSeries(Scene):
                 f.write(json.dumps(subtitle_json, ensure_ascii=False) + '\n')
 
         # 默认情况下根据字符数目自动决定等待时间
-        if wait==0:
+        if wait == 0:
             wait = len(text_voice) * self.time_per_char
-        else:
-            wait = wait
             
         # 等待语音播放并更新动画计时器
         self.wait(wait); self.animation_timer += float(wait)
@@ -455,42 +459,67 @@ class PowerFunctionFourierSeries(Scene):
 # 主函数
 if __name__ == "__main__":
     # 从命令行输入质量参数
-    parser = argparse.ArgumentParser(description="运行模板动画")
+    parser = argparse.ArgumentParser(description="运行幂函数傅里叶级数展开动画")
     parser.add_argument("--quality", "-q", type=str, choices=["l", "m", "h", "k"], default="l",
                         help="动画质量：l(低), m(中), h(高), k(4K)")
+    parser.add_argument("--preview", "-p", action="store_true",
+                        help="是否自动预览")
+    parser.add_argument("--force", "-f", action="store_true",
+                        help="是否强制重新渲染")
+    parser.add_argument("--keep-cache", "-k", action="store_true",
+                        help="是否保留缓存文件不清除")
     args = parser.parse_args()
 
-    # 定义 manim 命令行参数
-    quality = args.quality  # 从命令行参数获取质量设置
-    voice_name = "longlaotie"  # 可选的有 longlaotie, longbella 等
-
-    buff = PowerFunctionFourierSeries() # 创建一个虚的对象用于获取字幕文件路径
+    # 创建一个临时对象用于获取字幕文件路径
+    buff = PowerFunctionFourierSeries()
     class_name = buff.__class__.__name__
     script_filename = os.path.splitext(os.path.basename(__file__))
 
+    # 将质量参数转换为 manim 的输出质量
+    quality = args.quality
+    voice_name = "longlaotie"  # 使用龙老铁音色
     quality_to_str = {
         "l": "480p15",
         "m": "720p30",
         "h": "1080p60",
         "k": "2160p60"
-    }; quality_str = quality_to_str.get(quality)
+    }
+    quality_str = quality_to_str.get(quality)
 
-    # 构建并执行 manim 命令，-q 指定渲染质量，-p 指定预览，__file__ 指定当前文件，PowerFunctionFourierSeries 指定类名
-    # 计算并输出渲染时间
+    # 构建并执行命令
+    preview_flag = "-p" if args.preview else ""
+    force_flag = "-f" if args.force else ""
+    cmd = f"manim -q{quality} {preview_flag} {force_flag} {__file__} {class_name}"
+    print(f"执行命令: {cmd}")
+    print("正在渲染动画，请耐心等待...")
+    
+    # 计时
     import time
     start_time = time.time()
-    cmd = f"manim -q{quality} {__file__} {class_name}"
     result = subprocess.run(cmd, shell=True)
     render_time = time.time() - start_time
     print(f"渲染完成！总耗时：{render_time:.2f}秒")
 
-    from generate_speech import generate_speech
-    # 根据 manim 的输出结构确定文件路径
-    # 视频文件路径：media/videos/ai_code/质量标识/类名.mp4
-    # 字幕文件路径：media/subtitles.jsonl
+    # 视频文件路径
     video_file = f"media/videos/{script_filename[0]}/{quality_str}/{class_name}.mp4"
     
-    # 调用语音生成函数，使用阿里云的龙老铁音色，因其断句一般较好
+    # 在字幕文件第一行插入视频文件和音色信息
+    with open(buff.subtitle_file, 'r+', encoding='utf-8') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(json.dumps({"video_file": video_file, "voice_name": voice_name}, ensure_ascii=False) + '\n' + content)
+    
+    # 调用语音生成函数
     generate_speech(buff.subtitle_file)
     
     print(f"动画已通过命令行渲染完成，带配音的文件为：{video_file.replace('.mp4', '_WithAudio.mp4')}")
+    
+    # 清理缓存文件（仅当未指定保留缓存时）
+    if not args.keep_cache:
+        partial_dir = f"media/videos/{script_filename[0]}/{quality_str}/partial_movie_files"
+        if os.path.exists(partial_dir):
+            shutil.rmtree(partial_dir)
+            print(f"已清除部分电影文件缓存: {partial_dir}")
+        print("缓存清理完成！")
+    else:
+        print("根据设置保留了缓存文件")
