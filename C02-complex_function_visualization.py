@@ -27,10 +27,10 @@ latex_formula2 = "f(z) = z^3/4 - z^2/2 + z"
 latex_formula3 = "f(z) = (x+y) + \mathbf{i}(x^2+y^2)/2"
 # 定义复函数自变量的范围
 z_scale = 1.0
-
+num_segments = 2880
 
 # 使用数值方法计算函数值的微分（注意不是导数）
-def numerical_derivative(z, function, num_segments=360):
+def numerical_derivative(z, function):
     """使用数值微分计算复数函数在点z处的导数
     返回一个列表，包含不同方向上的导数值
     """
@@ -281,8 +281,7 @@ class ComplexFunctionVisualization(Scene):
             self.animation_timer += 1.0
             
             # 计算导数
-            num_segments = 720  # 减少段数以提高性能
-            dz_angles, dfs = numerical_derivative(z_point, function, num_segments)
+            dz_angles, dfs = numerical_derivative(z_point, function)
             
             # 创建 dz 圆环和 df 圆环
             dz_radius = 0.5
